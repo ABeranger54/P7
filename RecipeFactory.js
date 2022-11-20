@@ -37,4 +37,22 @@ class RecipeFactory{
         });
         return res;
     }
+
+    static getIngredientTagList(fromList = RecipeFactory.RECIPES){
+        var ret = [];
+        fromList.forEach(function(r){
+            r._ingredients.forEach(function(i){
+                var contained = false;
+                ret.forEach(function(retV){
+                    if(retV.toLowerCase() == i.ingredient.toLowerCase()){
+                        contained = true;
+                    }
+                });
+                if(!contained){
+                    ret.push(i.ingredient);
+                }
+            });
+        });
+        return ret;
+    }
 }

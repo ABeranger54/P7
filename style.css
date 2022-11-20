@@ -145,11 +145,13 @@ article .description{
     flex-wrap: wrap;
     justify-content: space-between;
     padding: 10px 20px;
-    text-align: center;
 }
 
 .list .options p{
     width: 30%;
+    margin-bottom: 10px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .list img{
@@ -178,6 +180,7 @@ article .description{
 
 .list .content{
     display: none;
+    width: 500px;
 }
 
 .list .content .search{
