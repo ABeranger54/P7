@@ -21,13 +21,13 @@ header img{
     margin-bottom: 20px;
 }
 
-#searchBar{
+#searchBarContainer{
     display: flex;
     width: 100%;
     
 }
 
-#searchBar img{
+#searchBarContainer img{
     width: 26px;
     height: 26px;
     padding: 13px;
@@ -35,7 +35,7 @@ header img{
     border-radius: 0 5px 5px 0;
 }
 
-#searchBar input{
+#searchBar{
     width: 100%;
     border: none;
     padding-left: 20px;
@@ -44,7 +44,7 @@ header img{
     background-color: #e9e9e9;
 }
 
-#searchBar input::placeholder{
+#searchBar::placeholder{
     color: #a0a0a0;
 }
 
@@ -117,4 +117,69 @@ article .description{
     display: -webkit-box !important;
     -webkit-line-clamp: 6;
     -webkit-box-orient: vertical;
+}
+
+.list{
+    background-color: #2e76e8;
+    color: #e5e5e5;
+    border-radius: 5px;
+}
+
+.list input{
+    background-color: #2e76e8;
+    border-radius: 5px;
+    border: none;
+    padding: 10px;
+    color: white;
+    height: 30px;
+    padding-left: 20px;
+    width: 470px;
+}
+
+.list input::placeholder{
+    color: #a2b7db;
+}
+
+.list .options{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.list .options p{
+    width: 30%;
+}
+
+.list img{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.search img{
+    margin-top: 15px;
+    margin-right: 15px;
+}
+
+.cover img{
+    margin-top: 17px;
+}
+
+.list .cover{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 150px;
+    height: 50px;
+    cursor: pointer;
+}
+
+.list .content{
+    display: none;
+}
+
+.list .content .search{
+    display: flex;
 }
