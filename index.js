@@ -1,3 +1,5 @@
+var ingredientsTAG = [];
+
 function init(){
     RecipeFactory.init();
     displayRecipes(RecipeFactory.RECIPES);
@@ -17,7 +19,9 @@ function init(){
         cover.tag = tag;
 
         const bar = tag.querySelector(".search input");
-        bar.addEventListener("keyup", updateTagList);
+        bar.addEventListener("keyup", function(){
+            fillTagList(t);
+        });
         bar.tag = tag;
 
         const arrow = tag.querySelector(".search img");
@@ -60,59 +64,90 @@ function closeTagList(event){
 }
 
 function getResultFromFilters(){
-    const list = getResultFromBar();
-
-    //UNDONE: check for filters
-
+    var list = getResultFromBar();
+    list = RecipeFactory.filterIngredients(ingredientsTAG, list);
     return list;
 }
 
 function fillTagList(tag){
     var list = [];
+    var listTag;
     if(tag == "ingredientList"){
         list = RecipeFactory.getIngredientTagList(getResultFromFilters());
+        listTag = ingredientsTAG;
     }
-    const options = document.querySelector("#" + tag + " .options");
+    const tagDOM = document.getElementById(tag);
+    const options = tagDOM.querySelector(".options");
     options.innerHTML = "";
-    list.forEach(function(i){
+    const inputValue = tagDOM.querySelector("input").value;
+
+    fList = [];
+    list.forEach(function(t){
+        if(t.toLowerCase().includes(inputValue.toLowerCase())){
+            var found = false;
+            listTag.forEach(function(i){
+                if(i.toLowerCase() == t.toLowerCase()){
+                    found = true;
+                }
+            });
+            if(!found){
+                fList.push(t);
+            }
+        }
+    })
+
+    fList.forEach(function(i){
         const p = document.createElement("p");
         p.textContent = i;
         p.list = tag;
         p.addEventListener("click", addTagToSearch);
         options.appendChild(p);
     });
-    
-}
-
-function updateTagList(event){
-    const tag = event.currentTarget.tag;
-    const value = event.currentTarget.value;
-
-    var res = [];
-    const options = tag.querySelector(".options");
-    const list = RecipeFactory.getIngredientTagList(getResultFromFilters());
-    list.forEach(function(i){
-        if(i.toLowerCase().includes(value.toLowerCase())){
-            res.push(i);
-        }
-    });
-    
-    options.innerHTML = "";
-
-    res.forEach(function(r){
-        const p = document.createElement("p");
-        p.textContent = r;
-        options.appendChild(p);
-    });
 }
 
 function addTagToSearch(event){
-    // const listType = event.currentTarget.list;
-    // var color;
-    // if(listType == "ingredientList"){
-    //     color = "#2e76e8";
-    // }
-    // console.log(listType);
+    const listType = event.currentTarget.list;
+    const div = document.createElement("div");
+    var color;
+    if(listType == "ingredientList"){
+        color = "color-ingredient";
+    }
+    div.setAttribute("class", color);
+
+    const p = document.createElement("p");
+    p.textContent = event.currentTarget.textContent;
+    div.appendChild(p);
+    
+    const img = document.createElement("img");
+    img.setAttribute("src", "images/cross.png");
+    img.setAttribute("alt", "Supprimer le filtre");
+    img.addEventListener("click", removeTagToSearch);
+    img.list = listType;
+    img.tag = event.currentTarget.textContent;
+    div.appendChild(img);
+
+    document.getElementById("tagList").appendChild(div);
+
+    ingredientsTAG.push(event.currentTarget.textContent);
+
+    fillTagList(listType);
+    displayRecipes(getResultFromFilters());
+}
+
+function removeTagToSearch(event){
+    const listType = event.currentTarget.list;
+    const tag = event.currentTarget.tag;
+    event.currentTarget.parentNode.remove();
+
+    if(listType == "ingredientList"){
+        for(var i = 0; i < ingredientsTAG.length; i++){ 
+            if (ingredientsTAG[i] == tag) { 
+                ingredientsTAG.splice(i, 1); 
+            }
+        }
+    }
+    fillTagList(listType);
+    displayRecipes(getResultFromFilters());
 }
 
 init();

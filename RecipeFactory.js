@@ -38,6 +38,32 @@ class RecipeFactory{
         return res;
     }
 
+    static filterIngredients(tagList, recipesList = RecipeFactory.RECIPES){
+        if(tagList == 0){
+            return recipesList;
+        }
+
+        var res = [];
+
+        recipesList.forEach(function(r){
+            var isFound = true;
+            tagList.forEach(function(t){
+                var found = false;
+                r._ingredients.forEach(function(i){
+                    if(t.toLowerCase() == i.ingredient.toLowerCase()){
+                        found = true;
+                    }
+                });
+                isFound = isFound && found;
+            });
+            if(isFound){
+                res.push(r);
+            }
+        });
+
+        return res;
+    }
+
     static getIngredientTagList(fromList = RecipeFactory.RECIPES){
         var ret = [];
         fromList.forEach(function(r){
