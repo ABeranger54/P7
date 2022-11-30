@@ -10,6 +10,14 @@ class Recipe{
         this._ustensils = data.ustensils;
     }
 
+    haveIngredient(ingredientName){
+        return this._ingredients.find(i => i.ingredient.toLowerCase() == ingredientName.toLowerCase());
+    }
+
+    haveUstensil(ustensilName){
+        return this._ustensils.find(u => u.toLowerCase() == ustensilName.toLowerCase());
+    }
+
     getCardDOM(){
         const article = document.createElement("article");
 

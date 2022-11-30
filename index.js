@@ -1,46 +1,52 @@
-var ingredientsTAG = [];
+var menus = [];
 
 function init(){
     RecipeFactory.init();
     displayRecipes(RecipeFactory.RECIPES);
 
+    var menuContainer = document.getElementById("listContainer");
+    menus.push(new Menu("ingredient", "Ingrédients", "Rechercher un ingrédient", menuContainer));
+    menus.push(new Menu("appareil", "Appareils", "Rechercher un appareil", menuContainer));
+    menus.push(new Menu("ustensils", "Ustensiles", "Rechercher un ustensile", menuContainer));
+
     document.getElementById("searchBar").addEventListener("keyup", function(){
         displayRecipes(getResultFromFilters());
-        getDOMTagID().forEach(v => fillTagList(v));
+        menus.forEach(m => fillTagList(m));
     });
 
-    var tagsID = getDOMTagID();
+    menus.forEach(function(menu){
+        menu.addOpenListener(openMenu);
+        menu.addCloseListener(closeMenu);
 
-    tagsID.forEach(function(t){
-        tag = document.querySelector("#" + t);
-
-        const cover = tag.querySelector(".cover");
-        cover.addEventListener("click", openTagList);
-        cover.tag = tag;
-
-        const bar = tag.querySelector(".search input");
+        const bar = menu.getDOM().querySelector(".search input");
         bar.addEventListener("keyup", function(){
-            fillTagList(t);
+            fillTagList(menu);
         });
-        bar.tag = tag;
 
-        const arrow = tag.querySelector(".search img");
-        arrow.addEventListener("click", closeTagList);
-        arrow.tag = tag;
-
-        fillTagList(t);
+        fillTagList(menu);
     });
     
 }
 
-function getDOMTagID(){
-    return ["ingredientList"];
+function openMenu(event){
+    menus.forEach(m => m.close());
+    event.currentTarget.menu.open();
+}
+
+function closeMenu(event){
+    event.currentTarget.menu.close();
 }
 
 function displayRecipes(recipes){
     const main = document.querySelector("main");
     main.innerHTML = "";
-    recipes.forEach(r => main.appendChild(r.getCardDOM()));
+    const noResultMessage = document.getElementById("noResultMessage");
+    if(recipes.length > 0){
+        recipes.forEach(r => main.appendChild(r.getCardDOM()));
+        noResultMessage.style.display = "none";
+    }else{
+        noResultMessage.style.display = "block";
+    }
 }
 
 function getResultFromBar(){
@@ -51,102 +57,42 @@ function getResultFromBar(){
     return RecipeFactory.filterFromBar1(sbValue);
 }
 
-function openTagList(event){
-    const tag = event.currentTarget.tag;
-    tag.querySelector(".cover").style.display = "none";
-    tag.querySelector(".content").style.display = "block";
-}
-
-function closeTagList(event){
-    const tag = event.currentTarget.tag;
-    tag.querySelector(".cover").style.display = "flex";
-    tag.querySelector(".content").style.display = "none";
-}
-
 function getResultFromFilters(){
     var list = getResultFromBar();
-    list = RecipeFactory.filterIngredients(ingredientsTAG, list);
+    list = RecipeFactory.filterIngredients(menus[0]._appliedTAGS, list);
+    list = RecipeFactory.filterAppliance(menus[1]._appliedTAGS, list);
+    list = RecipeFactory.filterUstensils(menus[2]._appliedTAGS, list);
     return list;
 }
 
-function fillTagList(tag){
+function fillTagList(menu){
     var list = [];
-    var listTag;
-    if(tag == "ingredientList"){
-        list = RecipeFactory.getIngredientTagList(getResultFromFilters());
-        listTag = ingredientsTAG;
-    }
-    const tagDOM = document.getElementById(tag);
-    const options = tagDOM.querySelector(".options");
-    options.innerHTML = "";
-    const inputValue = tagDOM.querySelector("input").value;
+    if(menu == menus[0]) list = RecipeFactory.getIngredientTagList(getResultFromFilters());
+    else if(menu == menus[1]) list = RecipeFactory.getApplianceTagList(getResultFromFilters());
+    else if(menu == menus[2]) list = RecipeFactory.getUstensilsList(getResultFromFilters());
 
-    fList = [];
-    list.forEach(function(t){
-        if(t.toLowerCase().includes(inputValue.toLowerCase())){
-            var found = false;
-            listTag.forEach(function(i){
-                if(i.toLowerCase() == t.toLowerCase()){
-                    found = true;
-                }
-            });
-            if(!found){
-                fList.push(t);
-            }
-        }
-    })
-
-    fList.forEach(function(i){
-        const p = document.createElement("p");
-        p.textContent = i;
-        p.list = tag;
-        p.addEventListener("click", addTagToSearch);
-        options.appendChild(p);
-    });
+    menu.fill(list, addTagToSearch);
 }
 
 function addTagToSearch(event){
-    const listType = event.currentTarget.list;
-    const div = document.createElement("div");
-    var color;
-    if(listType == "ingredientList"){
-        color = "color-ingredient";
-    }
-    div.setAttribute("class", color);
+    const menu = event.currentTarget.menu;
+    const tag = event.currentTarget.textContent;
 
-    const p = document.createElement("p");
-    p.textContent = event.currentTarget.textContent;
-    div.appendChild(p);
+    const tagDOM = menu.addAppliedTAG(tag, removeTagToSearch);
+    document.getElementById("tagList").appendChild(tagDOM);
     
-    const img = document.createElement("img");
-    img.setAttribute("src", "images/cross.png");
-    img.setAttribute("alt", "Supprimer le filtre");
-    img.addEventListener("click", removeTagToSearch);
-    img.list = listType;
-    img.tag = event.currentTarget.textContent;
-    div.appendChild(img);
-
-    document.getElementById("tagList").appendChild(div);
-
-    ingredientsTAG.push(event.currentTarget.textContent);
-
-    fillTagList(listType);
+    menus.forEach(m => fillTagList(m));
     displayRecipes(getResultFromFilters());
 }
 
 function removeTagToSearch(event){
-    const listType = event.currentTarget.list;
+    const menu = event.currentTarget.menu;
     const tag = event.currentTarget.tag;
     event.currentTarget.parentNode.remove();
+    
+    menu.removeAppliedTAG(tag);
 
-    if(listType == "ingredientList"){
-        for(var i = 0; i < ingredientsTAG.length; i++){ 
-            if (ingredientsTAG[i] == tag) { 
-                ingredientsTAG.splice(i, 1); 
-            }
-        }
-    }
-    fillTagList(listType);
+    menus.forEach(m => fillTagList(m));
     displayRecipes(getResultFromFilters());
 }
 
