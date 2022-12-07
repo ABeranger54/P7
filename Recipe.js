@@ -10,14 +10,17 @@ class Recipe{
         this._ustensils = data.ustensils;
     }
 
+    //Retourne vrai si la recette contient l'ingrédient ingredientName
     haveIngredient(ingredientName){
         return this._ingredients.find(i => i.ingredient.toLowerCase() == ingredientName.toLowerCase());
     }
 
+    //Retourne vrai si la recette contient l'ustensile ustensilName
     haveUstensil(ustensilName){
         return this._ustensils.find(u => u.toLowerCase() == ustensilName.toLowerCase());
     }
 
+    //Retourne la recette sous forme d'élément DOM
     getCardDOM(){
         const article = document.createElement("article");
 

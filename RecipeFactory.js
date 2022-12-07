@@ -1,23 +1,30 @@
 class RecipeFactory{
 
+    //Représente une liste de la totalité des recettes, sous forme d'objet.
     static RECIPES;
 
+    //Crée et ajoute les recettes sous forme d'objet dans la liste RECIPES
     static init(){
         RecipeFactory.RECIPES = new Array();
         recipesList.forEach(r => RecipeFactory.RECIPES.push(new Recipe(r)));
     }
 
+    //Alorithme de filtre #1
+    //Filtre les recettes à partir de la valeur contenue dans la barre de recherche
+    //Retourne la liste de recettes filtrée
     static filterFromBar1(input){
-        const res = RecipeFactory.RECIPES.filter(function(r){
+        const res = RecipeFactory.RECIPES.filter(function(r){ //Utilisation de la methode Array.filter
             const inName = r._name.toLowerCase().includes(input.toLowerCase());
             const inDescription = r._description.toLowerCase().includes(input.toLowerCase());
             const inIngredients = r._ingredients.filter(i => i.ingredient.toLowerCase().includes(input.toLowerCase()));
-            
-           return inName || inDescription || inIngredients.length > 0;
+            return inName || inDescription || inIngredients.length > 0;
         });
         return res;
     }
 
+    //Alorithme de filtre #2
+    //Filtre les recettes à partir de la valeur contenue dans la barre de recherche
+    //Retourne la liste de recettes filtrée
     static filterFromBar2(input){
         var res = [];
         RecipeFactory.RECIPES.forEach(function(r){
@@ -37,6 +44,7 @@ class RecipeFactory{
         return res;
     }
 
+    //Retourne les recettes contenues dans recipesList ayant une correspondance avec tous les ingrédients contenus dans tagList
     static filterIngredients(tagList, recipesList = RecipeFactory.RECIPES){
         if(tagList == 0) return recipesList;
         var res = [];
@@ -54,6 +62,7 @@ class RecipeFactory{
         return res;
     }
 
+    //Retourne les recettes contenues dans recipesList ayant une correspondance avec tous les appareils contenus dans tagList
     static filterAppliance(tagList, recipesList = RecipeFactory.RECIPES){
         if(tagList == 0) return recipesList;
         var res = [];
@@ -68,6 +77,7 @@ class RecipeFactory{
         return res;
     }
 
+    //Retourne les recettes contenues dans recipesList ayant une correspondance avec tous les ustensiles contenus dans tagList
     static filterUstensils(tagList, recipesList = RecipeFactory.RECIPES){
         if(tagList == 0) return recipesList;
         var res = [];
@@ -85,6 +95,7 @@ class RecipeFactory{
         return res;
     }
 
+    //Retourne la liste des ingrédients contenus dans les recettes de la liste fromList
     static getIngredientTagList(fromList = RecipeFactory.RECIPES){
         var ret = [];
         fromList.forEach(function(r){
@@ -103,6 +114,7 @@ class RecipeFactory{
         return ret;
     }
 
+    //Retourne la liste des appareils contenus dans les recettes de la liste fromList
     static getApplianceTagList(fromList = RecipeFactory.RECIPES){
         var ret = [];
         fromList.forEach(function(r){
@@ -119,6 +131,7 @@ class RecipeFactory{
         return ret;
     }
 
+    //Retourne la liste des ustensils contenus dans les recettes de la liste fromList
     static getUstensilsList(fromList = RecipeFactory.RECIPES){
         var ret = [];
         fromList.forEach(function(r){
